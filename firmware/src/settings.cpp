@@ -27,75 +27,75 @@ static void update(sets::Updater& u) {
 
     u.update("local_time"_h, NTP.timeToString());
     u.update("synced"_h, NTP.synced());
-    if (ota.hasUpdate()) u.update("ota_update"_h, F("Доступно обновление. Обновить прошивку?"));
+    if (ota.hasUpdate()) u.update("ota_update"_h, F("Update available. Update firmware?"));
 
     Looper.getTimer("redraw")->restart(100);
 }
 
 static void build(sets::Builder& b) {
     {
-        sets::Group g(b, "Часы");
+        sets::Group g(b, "Clock");
 
-        b.Select(kk::clock_style, "Шрифт", "Нет;Тип 1;Тип 2;Тип 3");
-        b.Color(kk::clock_color, "Цвет");
+        b.Select(kk::clock_style, "Font", "None;Type 1;Type 2;Type 3");
+        b.Color(kk::clock_color, "Color");
     }
     {
-        sets::Group g(b, "Фон");
+        sets::Group g(b, "Background");
 
-        if (b.Select(kk::back_mode, "Фон", "Нет;Градиент;Перлин")) b.reload();
+        if (b.Select(kk::back_mode, "Background", "None;Gradient;Perlin")) b.reload();
 
         if (db[kk::back_mode].toInt()) {
-            b.Select(kk::back_pal, "Палитра", getPaletteList());
-            b.Slider(kk::back_bright, "Яркость", 0, 255);
-            b.Slider(kk::back_speed, "Скорость");
-            b.Slider(kk::back_scale, "Масштаб");
-            b.Slider(kk::back_angle, "Угол", -180, 180);
+            b.Select(kk::back_pal, "Palette", getPaletteList());
+            b.Slider(kk::back_bright, "Brightness", 0, 255);
+            b.Slider(kk::back_speed, "Speed");
+            b.Slider(kk::back_scale, "Scale");
+            b.Slider(kk::back_angle, "Angle", -180, 180);
         }
     }
     {
-        sets::Group g(b, "Яркость");
-        if (b.Switch(kk::auto_bright, "Автояркость")) b.reload();
-        b.Label("adc_val"_h, "Сигнал с датчика");
+        sets::Group g(b, "Brightness");
+        if (b.Switch(kk::auto_bright, "Auto Brightness")) b.reload();
+        b.Label("adc_val"_h, "Sensor Signal");
 
         if (db[kk::auto_bright]) {
-            b.Slider(kk::bright_min, "Мин.", 0, 255);
-            b.Slider(kk::bright_max, "Макс.", 0, 255);
+            b.Slider(kk::bright_min, "Min.", 0, 255);
+            b.Slider(kk::bright_max, "Max.", 0, 255);
 
             {
                 sets::Buttons bt(b);
-                if (b.Button(kk::adc_min, "Запомнить мин.")) db[kk::adc_min] = photo.getRaw();
-                if (b.Button(kk::adc_max, "Запомнить макс.")) db[kk::adc_max] = photo.getRaw();
+                if (b.Button(kk::adc_min, "Remember Min.")) db[kk::adc_min] = photo.getRaw();
+                if (b.Button(kk::adc_max, "Remember Max.")) db[kk::adc_max] = photo.getRaw();
             }
         } else {
-            b.Slider(kk::bright, "Яркость", 0, 255);
+            b.Slider(kk::bright, "Brightness", 0, 255);
         }
     }
     {
-        sets::Group g(b, "Ночной режим");
+        sets::Group g(b, "Night Mode");
 
-        if (b.Switch(kk::night_mode, "Включен")) b.reload();
+        if (b.Switch(kk::night_mode, "Enabled")) b.reload();
 
         if (db[kk::night_mode]) {
-            b.Color(kk::night_color, "Цвет");
-            b.Slider(kk::night_trsh, "Порог", 0, 1023);
+            b.Color(kk::night_color, "Color");
+            b.Slider(kk::night_trsh, "Threshold", 0, 1023);
         }
     }
     {
-        sets::Group g(b, "Время");
+        sets::Group g(b, "Time");
 
-        b.Input(kk::ntp_gmt, "Часовой пояс");
-        b.Input(kk::ntp_host, "NTP сервер");
-        b.LED("synced"_h, "Синхронизирован", NTP.synced());
-        b.Label("local_time"_h, "Локальное время", NTP.timeToString());
+        b.Input(kk::ntp_gmt, "Time Zone");
+        b.Input(kk::ntp_host, "NTP Server");
+        b.LED("synced"_h, "Synchronized", NTP.synced());
+        b.Label("local_time"_h, "Local Time", NTP.timeToString());
     }
     {
         sets::Group g(b, "WiFi");
 
-        b.Switch(kk::show_ip, "Показывать IP");
+        b.Switch(kk::show_ip, "Show IP");
         b.Input(kk::wifi_ssid, "SSID");
         b.Pass(kk::wifi_pass, "Pass", "");
 
-        if (b.Button("wifi_save"_h, "Подключить")) {
+        if (b.Button("wifi_save"_h, "Connect")) {
             Looper.pushEvent("wifi_connect");
         }
     }
